@@ -1,0 +1,43 @@
+server:
+  port: 9080
+  tomcat:
+    uri-encoding: UTF-8
+
+# 自定义配置文件值，对应在appConfig类中写入属性，注入后可直接取值
+app:
+  index: aaa
+  vlaue: 222
+  exceptionMessage1: 测试全局异常处理
+spring:
+  mvc:
+    view:
+      prefix: /
+      suffix: .jsp
+  datasource:
+      # oracle jdbc配置
+#      url: jdbc:oracle:thin:@//10.88.254.22/lg2pes
+#      username: pes
+#      password: pes
+#      driver-class-name: oracle.jdbc.driver.OracleDriver
+      #mysql jdbc配置
+      url: jdbc:mysql://127.0.0.1:3306/test
+      username: root
+      password: root
+      driver-class-name: com.mysql.jdbc.Driver
+  # 设置全局编码为UTF-8
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
+
+# mapperLocations指的路径是src/main/resources
+mybatis:
+  mapperLocations: classpath:com/app/*/mapper/*.xml
+  # 设置mybatis在控制台打印sql
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+# 日志配置
+logging:
+  level: info
+

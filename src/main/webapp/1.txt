@@ -1,0 +1,20 @@
+1、回显：
+    在跳转到相应页面的controller中，向请求中放值：model.addAttribute("user", Util.beanToJson(user));//值是json字符串
+    页面上在form标签上加属性，不能用",用' (工具类生成的json对象中是"， 解析会出错)
+    <form id='register' data='${user}'>
+2、下拉框配置：
+    <select id="testSelect1" name="testSelect" class="initSelect" typeid="test">
+        <option value="#value">#name</option>
+    </select>
+    配置class="initSelect"可以查询后台配置表
+    配置typeid="test"属性，默认查询DATA_CONFIG表中type_id为test的键值对
+    添加下拉样式模板，#name为显示值，#value为实际值
+
+    自定义配置其他表,添加属性
+    tableName:配置表名
+    filterName:过滤条件字段名称
+    filterValue:过滤条件字段值
+    displayName:显示值
+    displayValue:实际值
+3、后台throw new MessageException("xxxxx");会返回给前台带错误信息的json字符串
+4、plugin里面submitForm方法，传form的id，返回表单下所有表单元素的json字符数据

@@ -1,0 +1,19 @@
+<html>
+<head>
+    <meta charset="GBK"/>
+    <script src="js/jquery.min.js"></script>
+    <script type="text/javascript">
+
+        function test() {
+            $.post("/addJson",{"name":"aaaaaaa", "value": "bbbb"},function(result){
+                $("#aaa").html(result);
+            });
+        }
+    </script>
+</head>
+<body>
+
+<h1 id="aaa">aaaaaa190okjflksdkflj</h1>
+<button value="测试" onclick="test();">测试</button>
+</body>
+</html>
