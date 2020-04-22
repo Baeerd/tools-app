@@ -1,14 +1,10 @@
 package com.app.common.util;
 
-import com.app.common.entity.DataConfig;
-import com.app.image.entity.Image;
-import com.fasterxml.jackson.core.JsonParser;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import org.apache.commons.lang.StringUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -93,15 +89,6 @@ public class Util {
         config.registerJsonValueProcessor(Date.class, new DateJsonValueProcessor());
         JSONArray json = JSONArray.fromObject(bean,config);
         return json==null?"":json.toString();
-    }
-
-    public static void main(String[] args) {
-        DataConfig dataConfig = new DataConfig();
-        dataConfig.setName("name");
-        dataConfig.setValue("value");
-        dataConfig.setCreatedDt(new Date());
-        String result = beanToJson(dataConfig);
-        System.out.println(result);
     }
 
 }

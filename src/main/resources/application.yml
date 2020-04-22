@@ -15,15 +15,15 @@ spring:
       suffix: .jsp
   datasource:
       # oracle jdbc配置
-#      url: jdbc:oracle:thin:@//10.88.254.22/lg2pes
-#      username: pes
-#      password: pes
-#      driver-class-name: oracle.jdbc.driver.OracleDriver
+      url: jdbc:oracle:thin:@//10.188.26.39:1521/lg2dbt
+      username: pes
+      password: pes
+      driver-class-name: oracle.jdbc.driver.OracleDriver
       #mysql jdbc配置
-      url: jdbc:mysql://127.0.0.1:3306/test
-      username: root
-      password: root
-      driver-class-name: com.mysql.jdbc.Driver
+#      url: jdbc:mysql://127.0.0.1:3306/test
+#      username: root
+#      password: root
+#      driver-class-name: com.mysql.jdbc.Driver
   # 设置全局编码为UTF-8
   http:
     encoding:
