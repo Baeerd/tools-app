@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.app.generator.mapper.GeneratorMapper" >
+  <resultMap id="BaseResultMap" type="com.app.generator.entity.Generator" >
+    <result column="TABLE_NAME" property="tableName" jdbcType="VARCHAR" />
+    <result column="LAST_ANALYZED" property="lastAnalyzed" jdbcType="TIMESTAMP" />
+    <result column="NUM_ROWS" property="numRows" jdbcType="DECIMAL" />
+    <result column="TABLESPACE_NAME" property="tablespaceName" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+  <sql id="Base_Column_List" >
+    TABLE_NAME, LAST_ANALYZED, NUM_ROWS, TABLESPACE_NAME
+  </sql>
+
+  <select id="find" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select
+		<include refid="Base_Column_List" />
+	from USER_TABLES where LAST_ANALYZED is not null
+          <if test="tableName != null" >
+            and TABLE_NAME like '%'||#{tableName,jdbcType=VARCHAR}||'%'
+          </if>
+	order by LAST_ANALYZED desc
+  </select>
+</mapper>

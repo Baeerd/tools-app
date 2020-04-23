@@ -9,10 +9,10 @@ app:
   vlaue: 222
   exceptionMessage1: 测试全局异常处理
 spring:
-  mvc:
-    view:
-      prefix: /
-      suffix: .jsp
+#  mvc:
+#    view:
+#      prefix: /
+#      suffix: .jsp
   datasource:
       # oracle jdbc配置
       url: jdbc:oracle:thin:@//10.188.26.39:1521/lg2dbt

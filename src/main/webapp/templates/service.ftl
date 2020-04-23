@@ -6,4 +6,3 @@ import ${entityClass};
 public interface ${serviceName} extends BaseService<${entityName}> {
 
 }
-
