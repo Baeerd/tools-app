@@ -47,8 +47,9 @@
         <!-- oracle驱动 -->
         <dependency>
             <groupId>com.oracle</groupId>
-            <artifactId>ojdbc6</artifactId>
-            <version>11.2.0.1.0</version>
+            <artifactId>ojdbc8</artifactId>
+            <version>12.2.0.1.0</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Mysql驱动 -->
@@ -63,6 +64,13 @@
             <artifactId>pagehelper-spring-boot-starter</artifactId>
             <version>1.2.3</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.23</version>
+        </dependency>
+
 
         <!-- 对jsp支持 -->
         <!-- springboot内嵌tomcat对jsp的解析包 -->

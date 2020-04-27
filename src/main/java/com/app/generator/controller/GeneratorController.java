@@ -2,6 +2,7 @@ package com.app.generator.controller;
 
 import com.app.common.controller.BaseController;
 import com.app.common.entity.AppConfig;
+import com.app.common.entity.PageModel;
 import com.app.common.entity.Response;
 import com.app.common.exception.MessageException;
 import com.app.generator.entity.Generator;
@@ -117,8 +118,20 @@ public class GeneratorController extends BaseController<Generator>{
     }
 
     @RequestMapping("/getTables")
-    public Response getTables() {
-        List<Generator> tables = generatorService.findAll();
-        return new Response().success(tables);
+    public Response getTables(HttpServletRequest request, @RequestBody Map<String, String> params) {
+        String pageNum = request.getParameter("pageNum");
+        PageModel<Generator> page = generatorService.findByPage(params);
+        return new Response().success(page);
+    }
+
+    @RequestMapping("/generatorCode")
+    public void generatorCode(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> params) throws UnsupportedEncodingException {
+        String tableName = params.get("tableName");
+        String realPath=request.getServletContext().getRealPath("/");
+        response.setContentType("application/msexcel;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Disposition", "attachment;fileName=" + encode(tableName+".zip","UTF-8"));
+        generatorService.generatorCode(response, realPath, tableName);
+
     }
 }

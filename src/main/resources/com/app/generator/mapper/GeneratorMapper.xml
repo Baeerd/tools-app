@@ -22,4 +22,13 @@
           </if>
 	order by LAST_ANALYZED desc
   </select>
+
+    <select id="findCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select
+        count(0)
+        from USER_TABLES where LAST_ANALYZED is not null
+        <if test="tableName != null" >
+            and TABLE_NAME like '%'||#{tableName,jdbcType=VARCHAR}||'%'
+        </if>
+    </select>
 </mapper>

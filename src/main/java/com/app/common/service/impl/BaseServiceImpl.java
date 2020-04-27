@@ -99,9 +99,10 @@ public class BaseServiceImpl<T> implements BaseService<T> {
     public PageModel<T> findByPage(Map<String, String> params) {
         // 过滤params
         params = filterParams(params);
+        int total = getBaseMapper().findCount(params);
         Page<T> page = PageHelper.startPage(Integer.valueOf(params.get("pageNum")), Integer.valueOf(params.get("pageSize")));
         getBaseMapper().find(params);
-        PageModel<T> result = PageModel.build(page);
+        PageModel<T> result = PageModel.build(page, total);
         return result;
     }
 

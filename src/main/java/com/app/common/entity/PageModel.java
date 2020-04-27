@@ -36,10 +36,11 @@ public class PageModel<T> {
         this.setPageSize(pageSize);
     }
 
-    public static <T> PageModel<T> build(Page<T> page) {
+    public static <T> PageModel<T> build(Page<T> page, int total) {
         PageModel<T> pageModel = new PageModel<>();
         BeanUtils.copyProperties(page.toPageInfo(), pageModel);
         pageModel.setList(page.toPageInfo().getList());
+        pageModel.setTotal(total);
         return pageModel;
     }
 
