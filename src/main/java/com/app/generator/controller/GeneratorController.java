@@ -6,6 +6,7 @@ import com.app.common.entity.PageModel;
 import com.app.common.entity.Response;
 import com.app.common.exception.MessageException;
 import com.app.generator.entity.Generator;
+import com.app.generator.entity.TableDetail;
 import com.app.generator.service.GeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -131,7 +132,13 @@ public class GeneratorController extends BaseController<Generator>{
         response.setContentType("application/msexcel;charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Disposition", "attachment;fileName=" + encode(tableName+".zip","UTF-8"));
-        generatorService.generatorCode(response, realPath, tableName);
+        generatorService.generatorCode(response, realPath, params);
+    }
 
+    @RequestMapping("/getTableDetail")
+    public Response getTableDetail(HttpServletRequest request, @RequestBody Map<String, String> params) {
+        String tableName = params.get("tableName");
+        List<TableDetail> list = generatorService.getTableDetail(tableName);
+        return new Response().success(list);
     }
 }

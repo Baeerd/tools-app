@@ -115,7 +115,7 @@ public class Util {
         switch (DBType) {
             case "VARCHAR2" : javaType = "String"; break;
             case "VARCHAR" : javaType = "String"; break;
-            case "NUMBER" : javaType = "Long"; break;
+            case "NUMBER" : javaType = "BigDecimal"; break;
             case "DATE" : javaType = "Date"; break;
             case "NUMBER_" : javaType = "BigDecimal"; break;
             default:javaType = "String";break;

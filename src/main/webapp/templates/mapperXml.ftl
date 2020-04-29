@@ -5,6 +5,7 @@
 
     <resultMap id="BaseResultMap" type="${entityClass}" >
     <#list properlist as prop>
+        <!-- ${prop.fieldRemark} -->
         <id column="${prop.dbaName}" property="${prop.fieldName}" jdbcType="${prop.mapperType}" />
     </#list>
     </resultMap>
@@ -19,7 +20,7 @@
     </#list>
     </sql>
 
-    <select id="${find}" resultMap="BaseResultMap" parameterType="java.util.Map">
+    <select id="find" resultMap="BaseResultMap" parameterType="java.util.Map">
         select
         <include refid="Base_Column_List" />
         from ${tableName}
@@ -39,11 +40,11 @@
         </if>
     </select>
 
-    <delete id="${delete}" parameterType="${entityClass}" >
+    <delete id="delete" parameterType="${entityClass}" >
         delete from ${tableName} where SID = <#noparse>#{</#noparse>sid,jdbcType=DECIMAL}
     </delete>
 
-    <insert id="${insert}" parameterType="${entityClass}" >
+    <insert id="insert" parameterType="${entityClass}" >
         <selectKey resultType="java.lang.Long" keyProperty="sid" order="BEFORE" >
             SELECT ${insertSeq}.nextval FROM DUAL
         </selectKey>
@@ -67,7 +68,7 @@
         )
     </insert>
 
-    <update id="${update}" parameterType="${entityClass}" >
+    <update id="update" parameterType="${entityClass}" >
         update ${tableName} set version = version + 1,
         <trim suffixOverrides=",">
         <#list properlist as prop>

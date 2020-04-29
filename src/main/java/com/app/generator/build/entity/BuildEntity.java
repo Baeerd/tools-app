@@ -12,17 +12,18 @@ import java.util.Map;
 
 public class BuildEntity extends BuildJavaAbstract implements BuildJava {
 
-    public BuildEntity(String filePath, String tableName) {
+    public BuildEntity(String filePath, Map<String, String> params) {
         templateName = "entity.ftl";
         templatePath = filePath+"/templates";
         classPath = filePath+"/result";
-        this.tableName = tableName;
+        propMap.putAll(params);
+        propMap.put("package_entity", propMap.get("packageName")+".entity");
     }
 
     @Override
     public void generateDataList() {
         dataMap.put("package", propMap.get("package_entity"));
-        dataMap.put("class", Util.DBNameToJavaName(tableName));
+        dataMap.put("class", Util.DBNameToJavaName(propMap.get("tableName")));
 
         Integer num = propMap.get("entityField")!=null?Integer.valueOf(propMap.get("entityField")):0;
 
@@ -33,9 +34,10 @@ public class BuildEntity extends BuildJavaAbstract implements BuildJava {
                 continue;
             }
             Map<String, String> map = new HashMap<>();
-            map.put("fieldName", Util.fieldName(dbaDataMap.get("name")));
-            map.put("fieldType", Util.DBTypeToJavaType(dbaDataMap.get("type")));
-            map.put("fieldNameUpper", Util.fieldNameUpper(dbaDataMap.get("name")));
+            map.put("fieldName", Util.fieldName(dbaDataMap.get("colName")));
+            map.put("fieldRemark", Util.fieldName(dbaDataMap.get("remarks")));
+            map.put("fieldType", Util.DBTypeToJavaType(dbaDataMap.get("dbType")));
+            map.put("fieldNameUpper", Util.fieldNameUpper(dbaDataMap.get("colName")));
             properlist.add(map);
         }
 
@@ -43,7 +45,7 @@ public class BuildEntity extends BuildJavaAbstract implements BuildJava {
         // 生成目录
         folder = Util.packToFolder(propMap.get("package_entity"));
         // 生成文件
-        generateFileName = Util.DBNameToJavaName(tableName) + ".java";
+        generateFileName = Util.DBNameToJavaName(propMap.get("tableName")) + ".java";
 
     }
 

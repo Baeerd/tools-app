@@ -12,36 +12,35 @@ import java.util.Map;
 
 public class BuildMapperXml extends BuildJavaAbstract implements BuildJava {
 
-    public BuildMapperXml(String filePath, String tableName) {
+    public BuildMapperXml(String filePath, Map<String, String> params) {
         templateName = "mapperXml.ftl";
         templatePath = filePath+"/templates";
         classPath = filePath+"/result";
-        this.tableName = tableName;
+        propMap.putAll(params);
+        propMap.put("package_mapper", propMap.get("packageName")+".mapper");
+        propMap.put("package_entity", propMap.get("packageName")+".entity");
     }
 
     @Override
     public void generateDataList() {
         dataMap.put("package", propMap.get("package_mapper"));
-        dataMap.put("mapperClass", propMap.get("package_mapper") + "." + Util.DBNameToJavaName(tableName) + "Mapper");
-        dataMap.put("entityClass", propMap.get("package_entity") + "." + Util.DBNameToJavaName(tableName));
+        dataMap.put("mapperClass", propMap.get("package_mapper") + "." + Util.DBNameToJavaName(propMap.get("tableName")) + "Mapper");
+        dataMap.put("entityClass", propMap.get("package_entity") + "." + Util.DBNameToJavaName(propMap.get("tableName")));
 
-        dataMap.put("tableName", tableName);
-        dataMap.put("find", propMap.get("find"));
-        dataMap.put("insert", propMap.get("insert"));
-        dataMap.put("update", propMap.get("update"));
-        dataMap.put("delete", propMap.get("delete"));
-        dataMap.put("insertSeq", "SEQ_"+tableName);
+        dataMap.put("tableName", propMap.get("tableName"));
+        dataMap.put("insertSeq", propMap.get("insertSeq"));
 
         List<Map<String, String>> properlist = new ArrayList<>();
 
         for (Map<String, String> dbaDataMap : dbaList) {
             Map<String, String> map = new HashMap<>();
-            map.put("fieldName", Util.fieldName(dbaDataMap.get("name")));
-            map.put("fieldType", Util.DBTypeToJavaType(dbaDataMap.get("type")));
-            map.put("fieldNameUpper", Util.fieldNameUpper(dbaDataMap.get("name")));
+            map.put("fieldName", Util.fieldName(dbaDataMap.get("colName")));
+            map.put("fieldType", Util.DBTypeToJavaType(dbaDataMap.get("dbType")));
+            map.put("fieldNameUpper", Util.fieldNameUpper(dbaDataMap.get("colName")));
+            map.put("fieldRemark", Util.fieldName(dbaDataMap.get("remarks")));
 
-            map.put("dbaName", dbaDataMap.get("name"));
-            map.put("mapperType", Util.DBTypeToMapperType(dbaDataMap.get("type")));
+            map.put("dbaName", dbaDataMap.get("colName"));
+            map.put("mapperType", Util.DBTypeToMapperType(dbaDataMap.get("dbType")));
 
             properlist.add(map);
         }
@@ -51,6 +50,6 @@ public class BuildMapperXml extends BuildJavaAbstract implements BuildJava {
         // 生成目录
         folder = Util.packToFolder(propMap.get("package_mapper"));
         // 生成文件
-        generateFileName = Util.DBNameToJavaName(tableName) + "Mapper.xml";
+        generateFileName = Util.DBNameToJavaName(propMap.get("tableName")) + "Mapper.xml";
     }
 }

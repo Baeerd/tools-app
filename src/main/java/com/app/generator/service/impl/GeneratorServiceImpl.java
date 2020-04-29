@@ -9,12 +9,18 @@ import com.app.generator.build.mapper.BuildMapperXml;
 import com.app.generator.build.service.BuildService;
 import com.app.generator.build.service.BuildServiceImpl;
 import com.app.generator.entity.Generator;
+import com.app.generator.entity.TableDetail;
 import com.app.generator.service.GeneratorService;
+import com.app.generator.util.JdbcUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -22,37 +28,40 @@ import java.util.zip.ZipOutputStream;
 public class GeneratorServiceImpl extends BaseServiceImpl<Generator> implements GeneratorService {
 
     @Override
-    public void generatorCode(HttpServletResponse response, String filePath, String tableName) {
+    public void generatorCode(HttpServletResponse response, String filePath, Map<String, String> params) {
+
         // 生成代码文件
-        createFiles(filePath, tableName);
+        createFiles(filePath, params);
         // 压缩生成的文件并响应下载
-        compressAllZip(filePath+"/result", tableName+".zip", response);
-        // TODO 删除生成的文件
+        compressAllZip(filePath+"/result", params.get("tableName") +".zip", response);
+        // 删除生成的文件
+        deleteFiles(new File(filePath+"/result"));
     }
 
-    private void createFiles(String filePath, String tableName) {
+    private void createFiles(String filePath, Map<String, String> params) {
+        String tableName = params.get("tableName");
         // 实体
-        BuildJava buildEntity = new BuildEntity(filePath, tableName);
+        BuildJava buildEntity = new BuildEntity(filePath, params);
         buildEntity.generate();
 
         // mapper.xml
-        buildEntity = new BuildMapperXml(filePath, tableName);
+        buildEntity = new BuildMapperXml(filePath, params);
         buildEntity.generate();
 
         // mapper.java
-        buildEntity = new BuildMapperJava(filePath, tableName);
+        buildEntity = new BuildMapperJava(filePath, params);
         buildEntity.generate();
 
         // service
-        buildEntity = new BuildService(filePath, tableName);
+        buildEntity = new BuildService(filePath, params);
         buildEntity.generate();
 
         // serviceImpl
-        buildEntity = new BuildServiceImpl(filePath, tableName);
+        buildEntity = new BuildServiceImpl(filePath, params);
         buildEntity.generate();
 
         // Controller
-        buildEntity = new BuildController(filePath, tableName);
+        buildEntity = new BuildController(filePath, params);
         buildEntity.generate();
     }
 
@@ -146,4 +155,39 @@ public class GeneratorServiceImpl extends BaseServiceImpl<Generator> implements 
         return filePath.substring(index + basicRootDir.length());
     }
 
+    @Override
+    public List<TableDetail> getTableDetail(String tableName) {
+        List<TableDetail> list = new ArrayList<>();
+        List<Map<String, String>> maps = JdbcUtil.getTableInfo(tableName.toUpperCase());
+        if(CollectionUtils.isNotEmpty(maps)) {
+            for (Map<String, String> map : maps) {
+                TableDetail tableDetail = new TableDetail();
+                tableDetail.setColName(map.get("colName"));
+                tableDetail.setRemark(map.get("remarks"));
+                tableDetail.setDbType(map.get("dbType"));
+                list.add(tableDetail);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 删除目录中的文件
+     * @param file
+     */
+    private void deleteFiles(File file){
+        if (file.isDirectory()) {
+            File[] files=file.listFiles();
+            if(files != null && files.length > 0) {
+                for (File f : files) {
+                    if (f.isDirectory()) {
+                        deleteFiles(f);
+                    } else {
+                        f.delete();
+                    }
+                }
+            }
+        }
+        file.delete();
+    }
 }

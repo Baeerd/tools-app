@@ -1,5 +1,6 @@
 package com.app.generator.build;
 
+import com.app.generator.util.JdbcUtil;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
@@ -16,18 +17,15 @@ public abstract class BuildJavaAbstract implements BuildJava {
 
     protected String templateName;// 模板名称
 
-    protected String tableName;// 表名称
-
     protected String generateFileName;// 生成文件的名称
 
-    protected Map<String, String> propMap;// 配置文件属性对应的Map
+    protected Map<String, String> propMap = new HashMap<>();// 配置文件属性对应的Map
 
     protected List<Map<String, String>> dbaList;// 表字段集合，key 列名，value 列数据类型
 
     protected String folder;// 生成文件的路径
 
     public void init() {
-        propMap = new HashMap<String, String>();
         InputStream in = null;
         Properties p = new Properties();
         try {
@@ -53,6 +51,10 @@ public abstract class BuildJavaAbstract implements BuildJava {
             // 加载模版文件
             Template template = configuration.getTemplate(templateName);
             // 生成目录
+            File parentDir = new File(classPath);
+            if(!parentDir.exists() && !parentDir.isDirectory()) {
+                parentDir.mkdirs();
+            }
             File folderDir = new File(classPath + "/" + folder);
             if(!folderDir.exists() && !folderDir.isDirectory()) {
                 folderDir.mkdirs();
@@ -83,63 +85,10 @@ public abstract class BuildJavaAbstract implements BuildJava {
      */
     private void getDbaData() {
         dbaList = new ArrayList<>();
-        try {
-            Class.forName(propMap.get("jdbcName"));
-            String url = propMap.get("jdbcUrl");
-            String user = propMap.get("jdbcUser");
-            String password = propMap.get("jdbcPassword");
-
-            Connection conn = DriverManager.getConnection(url, user, password);
-
-            String sql = "select * from " + tableName;
-            PreparedStatement stmt;
-            stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery(sql);
-            ResultSetMetaData data = rs.getMetaData();
-            for (int i = 1; i <= data.getColumnCount(); i++) {
-                // 获得所有列的数目及实际列数
-                int columnCount = data.getColumnCount();
-                // 获得指定列的列名
-                String columnName = data.getColumnName(i);
-                // 获得指定列的列值
-                int columnType = data.getColumnType(i);
-                // 获得指定列的数据类型名
-                String columnTypeName = data.getColumnTypeName(i);
-                // 所在的Catalog名字
-                String catalogName = data.getCatalogName(i);
-                // 对应数据类型的类
-                String columnClassName = data.getColumnClassName(i);
-                // 在数据库中类型的最大字符个数
-                int columnDisplaySize = data.getColumnDisplaySize(i);
-                // 默认的列的标题
-                String columnLabel = data.getColumnLabel(i);
-                // 获得列的模式
-                String schemaName = data.getSchemaName(i);
-                // 某列类型的精确度(类型的长度)
-                int precision = data.getPrecision(i);
-                // 小数点后的位数
-                int scale = data.getScale(i);
-                // 获取某列对应的表名
-                String tableName = data.getTableName(i);
-                // 是否自动递增
-                boolean isAutoInctement = data.isAutoIncrement(i);
-                // 在数据库中是否为货币型
-                boolean isCurrency = data.isCurrency(i);
-                // 是否为空
-                int isNullable = data.isNullable(i);
-                // 是否为只读
-                boolean isReadOnly = data.isReadOnly(i);
-                // 能否出现在where中
-                boolean isSearchable = data.isSearchable(i);
-                Map<String, String> field = new HashMap<>();
-                field.put("name", columnName);
-                field.put("type", columnTypeName);
-                dbaList.add(field);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        dbaList = JdbcUtil.getTableInfo(propMap.get("tableName").toUpperCase());
     }
+
+
 
     public abstract void generateDataList();
 
