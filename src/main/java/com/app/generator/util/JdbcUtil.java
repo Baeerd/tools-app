@@ -1,5 +1,9 @@
 package com.app.generator.util;
 
+import com.app.common.exception.MessageException;
+import com.app.generator.entity.Generator;
+import org.apache.commons.lang.StringUtils;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,7 +13,7 @@ import java.util.*;
 
 public class JdbcUtil {
 
-    private static String templatePath = "src/main/webapp/templates";
+    public static String templatePath = "src/main/webapp/templates";
 
     private static String driver;
     private static String url;
@@ -145,5 +149,51 @@ public class JdbcUtil {
             throw new Exception("ORACLE数据库模式不允许为空");
         }
         return schema.toUpperCase().toString();
+    }
+
+    public static List<Generator> getTableData(String tableName) {
+        init();
+        Connection conn = null;
+        PreparedStatement p = null;
+        ResultSet resultSet = null;
+        List<Generator> generators = new ArrayList<>();
+
+        try {
+            conn = getConnections(driver, url, user, pwd);
+            if(StringUtils.isNotEmpty(tableName)) {
+                p = conn.prepareStatement("select TABLE_NAME, LAST_ANALYZED, NUM_ROWS, TABLESPACE_NAME from USER_TABLES where TABLE_NAME like ? and LAST_ANALYZED is not null order by LAST_ANALYZED desc");
+                p.setString(1, "%"+tableName+"%");
+            } else {
+                p = conn.prepareStatement("select TABLE_NAME, LAST_ANALYZED, NUM_ROWS, TABLESPACE_NAME from USER_TABLES where LAST_ANALYZED is not null order by LAST_ANALYZED desc");
+            }
+            resultSet = p.executeQuery();
+            while (resultSet.next()) {
+                Generator generator = new Generator();
+                generator.setTableName(resultSet.getString(1));
+                generator.setLastAnalyzed(resultSet.getDate(2));
+                generator.setNumRows(resultSet.getLong(3));
+                generator.setTablespaceName(resultSet.getString(4));
+                generators.add(generator);
+            }
+            System.out.println(generators);
+        } catch (Exception e) {
+            throw new MessageException(e.getMessage());
+        } finally {
+            try {
+                if(conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return generators;
     }
 }

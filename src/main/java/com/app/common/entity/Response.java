@@ -10,6 +10,7 @@ public class Response {
 
     private Object data;
     private boolean success;
+    private Object message;
 
     public Response success() {
         this.success=true;
@@ -22,7 +23,7 @@ public class Response {
         this.data = data;
         return this;
     }
-    
+
     public Response failure() {
         this.success=false;
         this.data = ERROR;
@@ -32,6 +33,7 @@ public class Response {
     public Response failure(String message) {
         this.success=false;
         this.data = message;
+        this.message = message;
         return this;
     }
 
@@ -41,6 +43,9 @@ public class Response {
 
 	public boolean isSuccess() {
 		return success;
-	}	
-	
+	}
+
+    public Object getMessage() {
+        return message;
+    }
 }

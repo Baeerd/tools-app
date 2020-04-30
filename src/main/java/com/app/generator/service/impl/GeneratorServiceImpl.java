@@ -1,5 +1,6 @@
 package com.app.generator.service.impl;
 
+import com.app.common.entity.PageModel;
 import com.app.common.service.impl.BaseServiceImpl;
 import com.app.generator.build.BuildJava;
 import com.app.generator.build.controller.BuildController;
@@ -12,15 +13,15 @@ import com.app.generator.entity.Generator;
 import com.app.generator.entity.TableDetail;
 import com.app.generator.service.GeneratorService;
 import com.app.generator.util.JdbcUtil;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -171,6 +172,7 @@ public class GeneratorServiceImpl extends BaseServiceImpl<Generator> implements 
         return list;
     }
 
+
     /**
      * 删除目录中的文件
      * @param file
@@ -189,5 +191,53 @@ public class GeneratorServiceImpl extends BaseServiceImpl<Generator> implements 
             }
         }
         file.delete();
+    }
+
+    @Override
+    public List<Generator> getTables(String tableName) {
+        List<Generator> tableData = JdbcUtil.getTableData(tableName);
+        return tableData;
+    }
+
+    @Override
+    public void saveJdbcConfig(Map<String, String> params) {
+        File file = new File(JdbcUtil.templatePath+"/config.properties");
+        PrintStream ps = null;
+        try {
+            ps = new PrintStream(new FileOutputStream(file));
+            ps.println("jdbcName="+params.get("jdbcName"));// 往文件里写入字符串
+            ps.println("jdbcUrl="+params.get("jdbcUrl"));// 往文件里写入字符串
+            ps.println("jdbcUser="+params.get("jdbcUser"));// 往文件里写入字符串
+            ps.println("jdbcPassword="+params.get("jdbcPassword"));// 往文件里写入字符串
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Map<String, String> getJdbcConfig() {
+        Map<String, String> params = new HashMap<>();
+        //创建Properties对象
+        Properties properties = new Properties();
+
+        FileReader fileReader = null;
+        try {
+            fileReader = new FileReader(JdbcUtil.templatePath+"/config.properties");
+            properties.load(fileReader);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //遍历
+        Set<String> keys = properties.stringPropertyNames();
+        for(String key : keys ) {
+            params.put(key, properties.get(key).toString());
+        }
+        try {
+            if (fileReader != null) {
+                fileReader.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return params;
     }
 }

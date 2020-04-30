@@ -62,7 +62,7 @@ public class GeneratorController extends BaseController<Generator>{
         }
         String realPath=request.getServletContext().getRealPath("/templates");
         String fileName = file.getOriginalFilename();
-        if(!fileName.endsWith(".ftl")) {
+        if(!fileName.endsWith(".ftl") && !fileName.endsWith(".properties")) {
             throw new MessageException("请上传正确模板（.ftl文件）");
         }
         int size = (int) file.getSize();
@@ -120,9 +120,8 @@ public class GeneratorController extends BaseController<Generator>{
 
     @RequestMapping("/getTables")
     public Response getTables(HttpServletRequest request, @RequestBody Map<String, String> params) {
-        String pageNum = request.getParameter("pageNum");
-        PageModel<Generator> page = generatorService.findByPage(params);
-        return new Response().success(page);
+        List<Generator> list = generatorService.getTables(params.get("tableName"));
+        return new Response().success(list);
     }
 
     @RequestMapping("/generatorCode")
@@ -140,5 +139,17 @@ public class GeneratorController extends BaseController<Generator>{
         String tableName = params.get("tableName");
         List<TableDetail> list = generatorService.getTableDetail(tableName);
         return new Response().success(list);
+    }
+
+    @RequestMapping("/saveJdbcConfig")
+    public Response saveJdbcConfig(@RequestBody Map<String, String> params) {
+        generatorService.saveJdbcConfig(params);
+        return new Response().success();
+    }
+
+    @RequestMapping("/getJdbcConfig")
+    public Response getJdbcConfig() {
+        Map<String, String> params = generatorService.getJdbcConfig();
+        return new Response().success(params);
     }
 }
