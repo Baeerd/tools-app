@@ -161,10 +161,10 @@ public class JdbcUtil {
         try {
             conn = getConnections(driver, url, user, pwd);
             if(StringUtils.isNotEmpty(tableName)) {
-                p = conn.prepareStatement("select TABLE_NAME, LAST_ANALYZED, NUM_ROWS, TABLESPACE_NAME from USER_TABLES where TABLE_NAME like ? and LAST_ANALYZED is not null order by LAST_ANALYZED desc");
+                p = conn.prepareStatement("select TABLE_NAME, LAST_ANALYZED, NUM_ROWS, TABLESPACE_NAME from USER_TABLES where TABLE_NAME like ? order by LAST_ANALYZED desc");
                 p.setString(1, "%"+tableName+"%");
             } else {
-                p = conn.prepareStatement("select TABLE_NAME, LAST_ANALYZED, NUM_ROWS, TABLESPACE_NAME from USER_TABLES where LAST_ANALYZED is not null order by LAST_ANALYZED desc");
+                p = conn.prepareStatement("select TABLE_NAME, LAST_ANALYZED, NUM_ROWS, TABLESPACE_NAME from USER_TABLES order by LAST_ANALYZED desc");
             }
             resultSet = p.executeQuery();
             while (resultSet.next()) {

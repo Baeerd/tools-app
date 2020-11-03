@@ -16,7 +16,7 @@
   <select id="find" parameterType="java.util.Map" resultMap="BaseResultMap">
   	select
 		<include refid="Base_Column_List" />
-	from USER_TABLES where LAST_ANALYZED is not null
+	from USER_TABLES where 1=1
           <if test="tableName != null" >
             and TABLE_NAME like '%'||#{tableName,jdbcType=VARCHAR}||'%'
           </if>
@@ -26,7 +26,7 @@
     <select id="findCount" parameterType="java.util.Map" resultType="java.lang.Integer">
         select
         count(0)
-        from USER_TABLES where LAST_ANALYZED is not null
+        from USER_TABLES where 1=1
         <if test="tableName != null" >
             and TABLE_NAME like '%'||#{tableName,jdbcType=VARCHAR}||'%'
         </if>

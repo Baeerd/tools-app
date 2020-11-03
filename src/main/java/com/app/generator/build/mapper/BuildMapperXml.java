@@ -27,7 +27,7 @@ public class BuildMapperXml extends BuildJavaAbstract implements BuildJava {
         dataMap.put("mapperClass", propMap.get("package_mapper") + "." + Util.DBNameToJavaName(propMap.get("tableName")) + "Mapper");
         dataMap.put("entityClass", propMap.get("package_entity") + "." + Util.DBNameToJavaName(propMap.get("tableName")));
 
-        dataMap.put("tableName", propMap.get("tableName"));
+        dataMap.put("tableName", propMap.get("tableNameAll"));
         dataMap.put("insertSeq", propMap.get("insertSeq"));
 
         List<Map<String, String>> properlist = new ArrayList<>();

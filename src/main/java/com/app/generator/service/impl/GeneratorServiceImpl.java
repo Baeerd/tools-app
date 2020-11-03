@@ -16,6 +16,7 @@ import com.app.generator.util.JdbcUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -40,7 +41,12 @@ public class GeneratorServiceImpl extends BaseServiceImpl<Generator> implements 
     }
 
     private void createFiles(String filePath, Map<String, String> params) {
+        String removeTop = params.get("removeTop");
         String tableName = params.get("tableName");
+        if(StringUtils.isNotEmpty(removeTop)) {
+            tableName = tableName.substring(removeTop.length());
+            params.put("tableName", tableName);
+        }
         // 实体
         BuildJava buildEntity = new BuildEntity(filePath, params);
         buildEntity.generate();

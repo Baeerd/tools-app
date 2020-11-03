@@ -6,7 +6,7 @@
     <resultMap id="BaseResultMap" type="${entityClass}" >
     <#list properlist as prop>
         <!-- ${prop.fieldRemark} -->
-        <id column="${prop.dbaName}" property="${prop.fieldName}" jdbcType="${prop.mapperType}" />
+        <result column="${prop.dbaName}" property="${prop.fieldName}" jdbcType="${prop.mapperType}" />
     </#list>
     </resultMap>
 

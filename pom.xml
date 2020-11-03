@@ -94,7 +94,6 @@
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
         </dependency>
-
         <!-- springboot热部署插件 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -109,6 +108,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.app.AppApplication</mainClass>
+                </configuration>
             </plugin>
         </plugins>
 

@@ -6,6 +6,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.cors.CorsConfiguration;
@@ -17,7 +19,7 @@ import org.springframework.web.filter.CorsFilter;
 @SpringBootApplication
 @EnableTransactionManagement
 @MapperScan(basePackages = {"com.app.*.mapper"})
-public class AppApplication {
+public class AppApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         SpringApplication.run(AppApplication.class, args);
@@ -36,5 +38,11 @@ public class AppApplication {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", buildConfig()); // 4
         return new CorsFilter(source);
+    }
+
+    @Override//为了打包springboot项目
+    protected SpringApplicationBuilder configure(
+            SpringApplicationBuilder builder) {
+        return builder.sources(this.getClass());
     }
 }

@@ -85,7 +85,7 @@ public abstract class BuildJavaAbstract implements BuildJava {
      */
     private void getDbaData() {
         dbaList = new ArrayList<>();
-        dbaList = JdbcUtil.getTableInfo(propMap.get("tableName").toUpperCase());
+        dbaList = JdbcUtil.getTableInfo(propMap.get("tableNameAll").toUpperCase());
     }
 
 
