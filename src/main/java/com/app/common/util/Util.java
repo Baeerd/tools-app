@@ -113,11 +113,13 @@ public class Util {
     public static String DBTypeToJavaType(String DBType) {
         String javaType = "";
         switch (DBType) {
-            case "VARCHAR2" : javaType = "String"; break;
-            case "VARCHAR" : javaType = "String"; break;
-            case "NUMBER" : javaType = "BigDecimal"; break;
-            case "DATE" : javaType = "Date"; break;
-            case "NUMBER_" : javaType = "BigDecimal"; break;
+            case "INT" :
+            case "NUMBER" :
+            case "NUMBER_" :
+                javaType = "BigDecimal"; break;
+            case "DATE" :
+            case "DATETIME" :
+                javaType = "Date"; break;
             default:javaType = "String";break;
         }
         return javaType;
@@ -131,11 +133,13 @@ public class Util {
     public static String DBTypeToMapperType(String DBType) {
         String javaType = "";
         switch (DBType) {
-            case "VARCHAR2" : javaType = "VARCHAR"; break;
-            case "VARCHAR" : javaType = "VARCHAR"; break;
-            case "NUMBER" : javaType = "DECIMAL"; break;
-            case "DATE" : javaType = "TIMESTAMP"; break;
-            case "NUMBER_" : javaType = "DECIMAL"; break;
+            case "NUMBER" :
+            case "INT" :
+            case "NUMBER_" :
+                javaType = "DECIMAL"; break;
+            case "DATE" :
+            case "DATETIME" :
+                javaType = "TIMESTAMP"; break;
             default:javaType = "VARCHAR";break;
         }
         return javaType;

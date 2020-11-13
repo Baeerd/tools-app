@@ -61,7 +61,7 @@ public class JdbcUtil {
             while (resultSet.next()) {
                 String tableName=resultSet.getString("TABLE_NAME");
 
-                if(tableName.equals(table)){
+                if(tableName.toUpperCase().equals(table.toUpperCase())){
                     ResultSet rs = conn.getMetaData().getColumns(null, getSchema(conn),tableName.toUpperCase(), "%");
 
                     while(rs.next()){
@@ -160,11 +160,22 @@ public class JdbcUtil {
 
         try {
             conn = getConnections(driver, url, user, pwd);
-            if(StringUtils.isNotEmpty(tableName)) {
-                p = conn.prepareStatement("select TABLE_NAME, LAST_ANALYZED, NUM_ROWS, TABLESPACE_NAME from USER_TABLES where TABLE_NAME like ? order by LAST_ANALYZED desc");
-                p.setString(1, "%"+tableName+"%");
+            if(!driver.contains("mysql")) {
+                if(StringUtils.isNotEmpty(tableName)) {
+                    p = conn.prepareStatement("select TABLE_NAME, LAST_ANALYZED, NUM_ROWS, TABLESPACE_NAME from USER_TABLES where TABLE_NAME like ? order by LAST_ANALYZED desc");
+                    p.setString(1, "%"+tableName+"%");
+                } else {
+                    p = conn.prepareStatement("select TABLE_NAME, LAST_ANALYZED, NUM_ROWS, TABLESPACE_NAME from USER_TABLES order by LAST_ANALYZED desc");
+                }
             } else {
-                p = conn.prepareStatement("select TABLE_NAME, LAST_ANALYZED, NUM_ROWS, TABLESPACE_NAME from USER_TABLES order by LAST_ANALYZED desc");
+                String schema = url.substring(url.lastIndexOf("/")+1);
+                if(StringUtils.isNotEmpty(tableName)) {
+                    p = conn.prepareStatement("SELECT table_name, update_time, table_rows, table_schema FROM INFORMATION_SCHEMA.TABLES WHERE" +
+                            " table_name like ? and table_schema = '"+schema+"' and table_type = 'BASE TABLE' order by create_time desc");
+                    p.setString(1, "%"+tableName+"%");
+                } else {
+                    p = conn.prepareStatement("SELECT table_name, update_time, table_rows, table_schema FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = '"+schema+"' and table_type = 'BASE TABLE' order by create_time desc");
+                }
             }
             resultSet = p.executeQuery();
             while (resultSet.next()) {
@@ -177,6 +188,7 @@ public class JdbcUtil {
             }
             System.out.println(generators);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new MessageException(e.getMessage());
         } finally {
             try {
